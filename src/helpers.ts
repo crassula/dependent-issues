@@ -2,6 +2,7 @@
 import { dequal } from 'dequal';
 import uniqBy from 'lodash.uniqby';
 import IssueRegex from 'issue-regex';
+import * as core from '@actions/core';
 
 // Ours
 import {
@@ -356,6 +357,7 @@ export class IssueManager {
 			})
 		).data;
 
+		core.info('Creating commit status: '+(isBlocked ? 'failure' : 'success'));
 		return this.gh.rest.repos.createCommitStatus({
 			...this.repo,
 			description,

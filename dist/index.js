@@ -253,6 +253,25 @@ exports.getActionContext = getActionContext;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -271,6 +290,7 @@ exports.IssueManager = exports.DependencyResolver = exports.DependencyExtractor 
 const dequal_1 = __nccwpck_require__(8713);
 const lodash_uniqby_1 = __importDefault(__nccwpck_require__(3586));
 const issue_regex_1 = __importDefault(__nccwpck_require__(2506));
+const core = __importStar(__nccwpck_require__(2186));
 function formatDependency(dep, repo) {
     const depRepo = { owner: dep.owner, repo: dep.repo };
     if (dequal_1.dequal(depRepo, repo)) {
@@ -496,6 +516,7 @@ class IssueManager {
                     : `Blocked by ${firstDependency} and ${blockers.length - 1} more issues`;
             // Get the PR Head SHA
             const pull = (yield this.gh.rest.pulls.get(Object.assign(Object.assign({}, this.repo), { pull_number: issue.number }))).data;
+            core.info('Creating commit status: ' + (isBlocked ? 'failure' : 'success'));
             return this.gh.rest.repos.createCommitStatus(Object.assign(Object.assign({}, this.repo), { description, sha: pull.head.sha, context: this.config.actionName, state: isBlocked ? 'failure' : 'success' }));
         });
     }
