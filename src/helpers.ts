@@ -329,10 +329,6 @@ export class IssueManager {
 	}
 
 	async updateCommitStatus(issue: Issue, dependencies: Dependency[]) {
-		if (!issue.pull_request) {
-			return;
-		}
-
 		const blockers = dependencies.filter((dep) => dep.blocker);
 		const isBlocked = blockers.length > 0;
 		const firstDependency = isBlocked
@@ -357,7 +353,7 @@ export class IssueManager {
 			})
 		).data;
 
-		core.info('Creating commit status: '+(isBlocked ? 'failure' : 'success'));
+		core.info('Updating PR status: '+(isBlocked ? 'failure' : 'success'));
 		return this.gh.rest.repos.createCommitStatus({
 			...this.repo,
 			description,

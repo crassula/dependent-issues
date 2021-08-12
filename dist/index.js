@@ -140,7 +140,6 @@ function checkIssues(context) {
                 : yield manager.removeLabel(issue);
             core.info('Updating Action comments');
             yield manager.writeComment(issue, manager.generateComment(dependencies, dependencies, config), !isBlocked);
-            core.info(`Updating PR status${issue.pull_request ? '' : '. Skipped'}`);
             yield manager.updateCommitStatus(issue, dependencies);
             core.endGroup();
         }
@@ -499,9 +498,6 @@ class IssueManager {
     }
     updateCommitStatus(issue, dependencies) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!issue.pull_request) {
-                return;
-            }
             const blockers = dependencies.filter((dep) => dep.blocker);
             const isBlocked = blockers.length > 0;
             const firstDependency = isBlocked
@@ -516,7 +512,7 @@ class IssueManager {
                     : `Blocked by ${firstDependency} and ${blockers.length - 1} more issues`;
             // Get the PR Head SHA
             const pull = (yield this.gh.rest.pulls.get(Object.assign(Object.assign({}, this.repo), { pull_number: issue.number }))).data;
-            core.info('Creating commit status: ' + (isBlocked ? 'failure' : 'success'));
+            core.info('Updating PR status: ' + (isBlocked ? 'failure' : 'success'));
             return this.gh.rest.repos.createCommitStatus(Object.assign(Object.assign({}, this.repo), { description, sha: pull.head.sha, context: this.config.actionName, state: isBlocked ? 'failure' : 'success' }));
         });
     }

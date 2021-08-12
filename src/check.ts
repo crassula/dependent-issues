@@ -83,9 +83,6 @@ export async function checkIssues(context: ActionContext) {
 			!isBlocked
 		);
 
-		core.info(
-			`Updating PR status${issue.pull_request ? '' : '. Skipped'}`
-		);
 		await manager.updateCommitStatus(issue, dependencies);
 		core.endGroup();
 	}
