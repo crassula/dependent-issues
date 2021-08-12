@@ -361,7 +361,7 @@ export class IssueManager {
 			description,
 			sha: pull.head.sha,
 			context: this.config.actionName,
-			state: isBlocked ? 'pending' : 'success',
+			state: isBlocked ? 'failure' : 'success',
 		});
 	}
 }
